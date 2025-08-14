@@ -1,525 +1,403 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Personal Skincare</title>
+    <title>Kişiselleştirilmiş Cilt Bakım Protokolü</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
+            background-color: #f7fafc;
         }
         .tab-active {
-            border-bottom-color: #4f46e5;
-            color: #4f46e5;
+            border-bottom-color: #6366f1; /* indigo-500 */
+            color: #1f2937; /* gray-800 */
             font-weight: 600;
         }
-        .tab-inactive {
-            border-bottom-color: transparent;
-            color: #6b7280;
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
         }
-        .product-link {
-            cursor: pointer;
-            color: #3b82f6;
-            font-weight: 500;
-        }
-        .product-link:hover {
-            text-decoration: underline;
-        }
-        /* Modal styles */
-        .modal {
-            transition: opacity 0.25s ease;
-        }
-        .modal-content {
-            transition: transform 0.25s ease;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
-<body class="antialiased text-gray-800">
+<body class="bg-gray-50 text-gray-800">
 
-    <div id="app" class="container mx-auto p-4 md:p-6 max-w-5xl">
-
-        <header class="text-center mb-6">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Kişiselleştirilmiş Cilt Bakım Protokolü</h1>
-            <p id="current-date" class="text-lg text-gray-500 mt-2"></p>
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-7xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-800">Kişiselleştirilmiş Cilt Bakım Protokolü</h1>
+            <p class="text-gray-600 mt-2">Döngünüzle senkronize, parlak bir cilt için günlük rehberiniz.</p>
         </header>
 
-        <!-- Tabs -->
-        <div class="border-b border-gray-200 mb-6">
-            <nav class="flex -mb-px space-x-6" aria-label="Tabs">
-                <button id="tab-today" class="py-4 px-1 border-b-2 text-sm font-medium">Bugünün Rutini</button>
-                <button id="tab-weekly" class="py-4 px-1 border-b-2 text-sm font-medium">Haftalık Plan</button>
-                <button id="tab-cycle" class="py-4 px-1 border-b-2 text-sm font-medium">Döngü Rehberi</button>
-                <button id="tab-products" class="py-4 px-1 border-b-2 text-sm font-medium">Ürün Kitaplığı</button>
-            </nav>
+        <!-- Navigation Tabs -->
+        <div class="flex justify-center border-b border-gray-200 mb-8">
+            <button id="today-tab" class="py-4 px-6 text-lg border-b-2 tab-active" onclick="showView('today')">Bugünün Rutini</button>
+            <button id="weekly-tab" class="py-4 px-6 text-lg border-b-2 border-transparent text-gray-500" onclick="showView('weekly')">Haftalık Rutin</button>
+            <button id="cycle-tab" class="py-4 px-6 text-lg border-b-2 border-transparent text-gray-500" onclick="showView('cycle')">Döngü Senkronizasyonu</button>
         </div>
 
-        <!-- Content Area -->
-        <main id="content-area">
-            <!-- Today's Routine -->
-            <div id="content-today"></div>
-            <!-- Weekly View -->
-            <div id="content-weekly" class="hidden"></div>
-            <!-- Cycle Guide -->
-            <div id="content-cycle" class="hidden"></div>
-            <!-- Product Library -->
-            <div id="content-products" class="hidden"></div>
+        <!-- Main Content -->
+        <main id="main-content">
+            <!-- Today's Routine View -->
+            <div id="today-view" class="fade-in">
+                <div id="today-routine-container" class="max-w-2xl mx-auto">
+                    <!-- Today's routine card will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Weekly Routine View -->
+            <div id="weekly-view" class="hidden fade-in">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="routine-grid">
+                    <!-- Daily routine cards will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Cycle Syncing View -->
+            <div id="cycle-view" class="hidden fade-in">
+                 <div class="bg-white p-6 rounded-2xl shadow-md max-w-4xl mx-auto">
+                    <h2 class="text-2xl font-bold text-center mb-6">Rutininizi Adet Döngüsüne Göre Ayarlama</h2>
+                    <div class="space-y-8" id="cycle-phases-container">
+                        <!-- Cycle phases will be inserted here -->
+                    </div>
+                </div>
+            </div>
         </main>
-
     </div>
-
-    <!-- Product Modal -->
-    <div id="product-modal" class="modal fixed inset-0 bg-gray-900 bg-opacity-60 flex items-center justify-center p-4 z-50 opacity-0 pointer-events-none">
-        <div id="modal-content-box" class="modal-content bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 md:p-8 transform scale-95">
-            <div class="flex justify-between items-start mb-4">
-                <h2 id="modal-product-name" class="text-2xl font-bold text-gray-900"></h2>
-                <button id="modal-close-btn" class="text-gray-400 hover:text-gray-600">
-                    <i class="fas fa-times fa-lg"></i>
-                </button>
-            </div>
-            <div id="modal-product-details" class="space-y-4 text-gray-700">
-                <!-- Details will be injected here -->
-            </div>
-        </div>
-    </div>
-
 
     <script>
         // --- DATA ---
-        // This section contains all the data extracted from your PDF document.
-        const products = {
-            // Cleansers
-            'Mamonde Mint Cleansing Balm': { type: 'Temizleme Balmı', actives: 'Nane Özleri', func: 'Makyaj/SPF Çözücü', role: 'Ana Rutin PM', notes: 'Çift aşamalı temizliğin ilk adımı için etkili ve nazik bir seçenek. Skin401 yağ ile değiştirilebilir.' },
-            'Skin401 Calendula Yağı': { type: 'Temizleme Yağı', actives: 'Kalendula Yağı', func: 'Makyaj/SPF Çözücü', role: 'Ana Rutin PM', notes: 'Çift aşamalı temizliğin ilk adımı için yatıştırıcı özellikli bir alternatif. Mamonde balm ile değiştirilebilir.' },
-            'Skin401 Pirinç Özlü Yüz Temizleme Jeli': { type: 'Jel Temizleyici', actives: 'Pirinç Özü', func: 'İkinci Temizleyici', role: 'Ana Rutin AM/PM', notes: 'Hassas cilt için uygun, nazik bir ikinci adım temizleyici. Sabahları tek başına veya akşamları çift aşamalı temizliğin ikinci adımı olarak idealdir.' },
-            'Bibimcos Enzyme Powder Wash': { type: 'Toz Temizleyici', actives: 'Papain, SLS', func: 'Enzimatik Eksfoliasyon', role: 'Kullanılması Önerilmez', notes: 'İçeriğindeki Sodyum Lauril Sülfat (SLS) hassas ciltler için oldukça sert ve tahriş edici olabilir. Cilt bariyerine zarar verme riski nedeniyle kullanımdan kaçınılmalıdır.' },
-            // Toners & Mists
-            'Bibimcos Cica Centella Toner': { type: 'Tonik', actives: 'Centella Asiatica, Madecassoside', func: 'Yatıştırıcı, Nemlendirici', role: 'Ana Rutin AM/PM', notes: 'Aktif içerik kullanılan gecelerde cildi sakinleştirmek ve genel olarak bariyeri desteklemek için mükemmel bir temel tonik.' },
-            'Anyong Barrier Boost Toner': { type: 'Tonik', actives: 'Seramidler, Peptitler', func: 'Bariyer Onarımı, Nem', role: 'Ana Rutin PM', notes: 'Özellikle "Nem/Bariyer Yenileme" geceleri için ideal, zengin içerikli bir onarıcı tonik.' },
-            'Bibimcos Rice Extract Toner': { type: 'Tonik', actives: 'Pirinç Ekstresi', func: 'Aydınlatıcı, Nemlendirici', role: 'Ana Rutin PM (Leke Gecesi)', notes: 'Cumartesi akşamı, leke karşıtı rutinin etkinliğini artırmak için kullanılacaktır.' },
-            'Maxclinic %2 Melatonin Liposome Toner': { type: 'Tonik', actives: 'Melatonin (%2), Niasinamid', func: 'Antioksidan, Onarıcı', role: 'Ana Rutin PM (Onarım Gecesi)', notes: 'Retinal sonrası "Onarma & Besleme" Çarşamba akşamı için cildin toparlanmasına yardımcı olacak güçlü bir antioksidan tonik.' },
-            'Cosrx Comfort Ceramide Cream Mist': { type: 'Mist', actives: 'Seramid NP, Pantenol', func: 'Bariyer Desteği, Anında Nem', role: 'Ana Rutin AM/PM', notes: 'Gün içinde veya rutin adımları arasında cilde anında nem ve konfor sağlamak için pratik ve etkili bir ürün.' },
-            'Village 11 Factory N Skin Formula Toner': { type: 'Tonik', actives: 'Çeşitli Bitki Özleri', func: 'Nemlendirici', role: 'Opsiyonel / Alternatif', notes: 'İyi bir nemlendirici tonik olmakla birlikte, diğer tonikleriniz daha hedef odaklıdır. Mevcut ürün bitince yeniden alınması gerekmeyebilir.' },
-            // Serums
-            'Derma Factory Retinal Cica Ampoule': { type: 'Retinoid Serumu', actives: 'Retinal (150ppm), TECA (5000ppm), Niasinamid 3%', func: 'Hücre Yenileme, Anti-Aging', role: 'Ana Rutin PM (Retinal Gecesi)', notes: 'Rutinin en güçlü yaşlanma karşıtı ve akne tedavi edici ürünü. Belirlenen gecelerde dikkatle kullanılmalıdır. Göz çevresinde kullanımı önerilmez.' },
-            'Derma Factory Matrixyl 15% Multi Wrinkle Serum': { type: 'Peptit Serumu', actives: 'Matrixyl (%15), Argireline (%2), Niasinamid (%2)', func: 'Kolajen Sentezi, Kırışıklık Azaltma', role: 'Ana Rutin PM (Onarım Gecesi)', notes: 'Retinal sonrası cildin yeniden yapılanma sürecini desteklemek için ideal, yüksek konsantrasyonlu bir peptit serumu.' },
-            'Beauty of Joseon Glow Deep Serum': { type: 'Leke Serumu', actives: 'Pirinç Kepeği Suyu (%68.6), Alfa-Arbutin (%2), Niasinamid', func: 'Leke Giderici, Aydınlatıcı', role: 'Ana Rutin AM & PM (Leke Gecesi)', notes: 'Traneksamik asitli krem ile sinerji yaratmak için Cumartesi akşamlarının ve sabah rutinlerinin ana leke serumu.' },
-            'Bibimcos Hyaluronic Booster Serum': { type: 'Nem Serumu', actives: '9 Hyaluronik Asit', func: 'Yoğun Nemlendirme', role: 'Ana Rutin AM/PM', notes: 'Tüm rutinlerde, özellikle aktif içeriklerin kurutucu etkisini dengelemek için kullanılabilecek temel bir nem serumu.' },
-            'Estee Lauder ANR Serum': { type: 'Onarıcı Serum', actives: 'Peptitler, Bifida Ferment Lysate', func: 'Genel Onarım, Antioksidan', role: 'Ana Rutin / Alternatif Serum', notes: 'Kaliteli bir onarım ve nem serumu. Rutinde, özellikle ekstra onarım ve nemlendirme istenen günlerde, Bibimcos Hyaluronic Booster Serum\'a alternatif olarak kullanılabilir.' },
-            'Yves Rocher AntiAge-Global Gece Serumu': { type: 'Onarıcı Serum', actives: 'Bitkisel Tomurcuk Nektarı', func: 'Yaşlanma Karşıtı', role: 'Opsiyonel / Alternatif', notes: 'Diğer serumlarınız daha spesifik ve kanıtlanmış aktifler içerdiğinden, bu ürün mevcut envanterinizde daha az önceliklidir. Bitene kadar kullanılabilir.' },
-            // Moisturizers & Eye Creams
-            'Derma Factory Beta-Sitosterol 3% Cream': { type: 'Bariyer Kremi', actives: 'Beta-Sitosterol (%3), Pantenol (%1), Seramid Kompleksi (%1)', func: 'Bariyer Onarımı, Yatıştırıcı', role: 'Ana Rutin AM/PM (Bariyer Geceleri)', notes: 'Rutinin temel taşı. Hassasiyeti yatıştırmak ve bariyeri güçlendirmek için en ideal nemlendirici. Özellikle dinlenme ve eksfoliasyon sonrası gecelerde kullanılacak.' },
-            'Derma Factory Tranexamic Acid 6% Cream': { type: 'Leke Kremi', actives: 'Traneksamik Asit (%6), Vitamin Ağacı Ekstresi (%61.4), Niasinamid (%2)', func: 'Leke Giderici, Aydınlatıcı', role: 'Ana Rutin PM (Leke Gecesi)', notes: 'Yüksek konsantrasyonlu içeriği ile leke tedavisinde çok güçlü bir ürün. Sadece belirlenen "Leke Odaklı" gecede kullanılacaktır.' },
-            'Anyong Barrier Renew Night Cream': { type: 'Gece Kremi', actives: 'Fermente Yeşil Çay, Bakuchiol, Peptitler', func: 'Onarıcı, Nemlendirici', role: 'Ana Rutin PM (Aktif Geceler)', notes: 'Retinal ve peptit gecelerinde, cildi beslemek ve onarım sürecini desteklemek için kullanılacak zengin içerikli bir gece kremi.' },
-            'Elensilia CPP Collagen 80 Intensive Cream': { type: 'Kolajen Kremi', actives: 'Kolajen, Peptitler', func: 'Sıkılaştırıcı, Nemlendirici', role: 'Opsiyonel / Alternatif', notes: 'Anyong kremi ile benzer bir role sahip. Anyong bitince veya rotasyonlu olarak kullanılabilir.' },
-            'Deoproce Multi-function Snail Recovery Cream': { type: 'Salyangoz Kremi', actives: 'Salyangoz Müsini', func: 'Onarıcı, Nemlendirici', role: 'Opsiyonel / Alternatif', notes: 'Cildin ekstra onarıma ihtiyaç duyduğu zamanlarda, özellikle bariyer gecelerinde kullanılabilir.' },
-            'Anyong Hydra-Repair Sleeping Mask': { type: 'Uyku Maskesi', actives: 'Hyaluronik Asit, Beta-Glukan', func: 'Yoğun Nemlendirme', role: 'Opsiyonel / Alternatif', notes: 'Bariyer yenileme gecelerinde, nemlendiricinin üzerine son katman olarak uygulanarak nem kaybını önler.' },
-            'DEOPROCE Adenozin İçeren Göz & Boyun Kremi': { type: 'Göz Kremi', actives: 'Niasinamid, Adenozin, Pantenol', func: 'Kırışıklık Karşıtı, Aydınlatıcı', role: 'Ana Rutin AM', notes: 'Sabahları göz çevresini nemlendirmek, aydınlatmak ve yorgunluk belirtilerini gidermek için idealdir.' },
-            'Elensilia CPP Collagen 80 Intensive Eye Cream': { type: 'Göz Kremi', actives: 'Kolajen (%80), Peptitler', func: 'Kırışıklık Karşıtı, Nem', role: 'Ana Rutin PM', notes: 'Gece boyu onarım için zengin ve yoğun bir göz kremi. Özellikle aktif içerik kullanılan gecelerde göz çevresini korur.' },
-            // Pads, Masks, Spot Treatments
-            'Frankly Closer Pore Tightening Toner Pad': { type: 'Peeling Pedi', actives: 'Glukonolakton (PHA), Peptitler', func: 'Nazik Eksfoliasyon, Gözenek Sıkılaştırma', role: 'Ana Rutin PM (Eksfoliasyon Gecesi)', notes: 'Hassas cildiniz için en uygun haftalık peeling ürünü. Sadece belirlenen Perşembe akşamı kullanılacaktır.' },
-            'Kremi Toner Pad': { type: 'Aydınlatıcı Ped', actives: 'C Vitamini, Traneksamik Asit, Mandelik Asit (AHA), Laktobionik Asit (PHA)', func: 'Eksfoliasyon, Aydınlatıcı', role: 'İleri Seviye Alternatif', notes: 'Frankly pedlerinden daha güçlü bir formül. Cilt alıştıktan sonra, leke odaklı bakımın yoğunlaştırılmak istendiği zamanlarda iki haftada bir Perşembe akşamı kullanılabilir.' },
-            'Yeppda AHA-BHA-PHA Spot Gel': { type: 'Noktasal Jel', actives: 'Glikolik Asit, Salisilik Asit, Glukonik Asit', func: 'Akne Kurutucu', role: 'SOS Noktasal Tedavi', notes: 'Sadece aktif sivilcelerin üzerine, ihtiyaç anında uygulanacak güçlü bir lokal tedavi ürünüdür. Asla tüm yüze sürülmemelidir.' },
-            'Medipeel Collagen Wrapping Mask': { type: 'Soyulabilir Kolajen Maske', actives: 'Hidrolize Kolajen (%70.2), Jojoba Yağı', func: 'Sıkılaştırıcı, Parlaklık Verici', role: 'Haftalık Bakım', notes: '"Onarma & Besleme" gecesinde, peptit serumundan sonra cilde anında bir sıkılık ve parlaklık vermek için kullanılabilir.' },
-            'Bibimcos Pore Clearing Clay Mask': { type: 'Kil Maskesi', actives: 'Kil, Centella Asiatica', func: 'Gözenek Temizliği, Sebum Kontrolü', role: 'Haftalık Bakım', notes: 'Pazar günleri veya ovülasyon döneminde, cildin ihtiyaç duyduğu durumlarda gözenekleri arındırmak için kullanılabilir.' },
-            'Maxclinic Synergy Effect BTX Mask': { type: 'Kağıt Maske', actives: 'Peptitler, Kolajen', func: 'Sıkılaştırıcı, Nemlendirici', role: 'Haftalık Bakım', notes: '"Onarma & Besleme" gecesi için Medipeel maskesine bir alternatif. Cilde yoğun nem ve peptit takviyesi sağlar.' },
-            'Maxclinic Vita-10 Calendula Eye Patch': { type: 'Göz Maskesi', actives: 'Kalendula, Vitaminler', func: 'Yatıştırıcı, Aydınlatıcı', role: 'Opsiyonel / AM Bakımı', notes: 'Sabahları, özel bir gün öncesi göz altlarını yatıştırmak, şişkinliği azaltmak ve aydınlatmak için kullanılabilir.' },
-            'Avene Eau Thermale': { type: 'Termal Su', actives: 'Avene Termal Suyu', func: 'Yatıştırıcı', role: 'Her Zaman', notes: 'Cildin gün içinde hassaslaştığı veya kızardığı her an kullanılabilecek, rutinin joker yatıştırıcı ürünü.' },
-            // Sunscreens
-            'WIWIFY Centella Sun Serum': { type: 'Güneş Serumu', actives: 'Yeni Nesil Filtreler, Centella Asiatica, Niasinamid', func: 'Yüksek Koruma, Yatıştırıcı', role: 'Ana Rutin AM', notes: 'Cildin hassas olduğu veya ekstra yatıştırıcı etki istenen günler için ideal, hafif yapılı bir güneş koruyucu.' },
-            'Dr.Korea Hydrating Sun Cream': { type: 'Güneş Kremi', actives: 'Yeni Nesil Filtreler, Niasinamid, Peptitler', func: 'Yüksek Koruma, Nemlendirici', role: 'Ana Rutin AM', notes: 'Cildin daha kuru hissedildiği veya ek nemlendirme ve yaşlanma karşıtı destek istenen günler için ideal, kremsi yapıda bir güneş koruyucu.' },
-        };
-
-        // FIX: Add generic/alias product references after the main object is created
-        products['Sadece Su veya Skin401 Pirinç Özlü Yüz Temizleme Jeli'] = products['Skin401 Pirinç Özlü Yüz Temizleme Jeli'];
-        products['WIWIFY Centella Sun Serum VEYA Dr.Korea Hydrating Sun Cream'] = products['WIWIFY Centella Sun Serum'];
-        products['Bibimcos Hyaluronic Booster Serum VEYA Estee Lauder ANR Serum'] = products['Bibimcos Hyaluronic Booster Serum'];
-        products['Mamonde Mint Cleansing Balm VEYA Skin401 Calendula Yağı'] = products['Mamonde Mint Cleansing Balm'];
-        products['Medipeel Collagen Wrapping Mask VEYA Maxclinic BTX Mask'] = products['Medipeel Collagen Wrapping Mask'];
-
-
-        const weeklyRoutine = {
-            // Day mapping: 0: Pazar, 1: Pazartesi, 2: Salı, 3: Çarşamba, 4: Perşembe, 5: Cuma, 6: Cumartesi
-            am: {
-                // Base routine for every morning
-                base: [
-                    { step: 1, name: 'Temizleme', product: 'Sadece Su veya Skin401 Pirinç Özlü Yüz Temizleme Jeli', notes: 'Cildi nazikçe güne hazırlamak. Foreo cihazı çarşamba ve cuma günleri harici bu adımda temizleyici ile birlikte kullanılabilir.' },
-                    { step: 4, name: 'Göz Kremi', product: 'DEOPROCE Adenozin İçeren Göz & Boyun Kremi', notes: 'Göz çevresini aydınlatmak, nemlendirmek ve güne hazırlamak.' },
-                    { step: 5, name: 'Nemlendirici', product: 'Derma Factory Beta-Sitosterol 3% Cream', notes: 'Cildi gün boyu sakin tutmak ve bariyeri desteklemek.' },
-                    { step: 6, name: 'Güneş Kremi', product: 'WIWIFY Centella Sun Serum VEYA Dr.Korea Hydrating Sun Cream', notes: 'PAZARLIKSIZ ADIM. Cildi UV hasarından, lekelenmeden ve hassasiyetten korumak.' }
+        // Parsed data from the provided PDF document
+        const skincareData = {
+            "Pazartesi": {
+                theme: "Nem & Bariyer",
+                morning: [
+                    { step: "1. Temizleme", product: "Sadece Su veya Licapenin Köpük", notes: "Miktar: Köpük için 1 pompa." },
+                    { step: "2. Cihaz", product: "Foreo BEAR™ 2", notes: "Aromatica Aloe Vera Gel ile kullanılır. Cildi sıkılaştırmak ve güne canlanmış başlamak için ideal." },
+                    { step: "3. Tonik/Mist", product: "Cosrx Comfort Ceramide Mist", notes: "Miktar: Yüze 2-3 fis." },
+                    { step: "4. Serum", product: "Bibimcos Hyaluronic Booster Serum", notes: "Miktar: 2-3 damla." },
+                    { step: "5. Göz Kremi", product: "Deoproce Super Berry Göz Kremi", notes: "Miktar: Her göz için yarım mercimek tanesi." },
+                    { step: "6. Nemlendirici", product: "Deoproce Snail Recovery Cream", notes: "Miktar: Nohut büyüklüğünde." },
+                    { step: "7. Güneş Kremi", product: "Dr. Korea Hydrating Sun Cream", notes: "Miktar: 2 parmak kuralı." }
                 ],
-                // Day-specific additions
-                days: [
-                    // Pazartesi (Monday)
-                    { tonik: { step: 2, name: 'Tonik/Mist', product: 'Cosrx Comfort Ceramide Cream Mist', notes: 'Pazar günkü dinlenmiş cildin nemini ve konforunu sürdürmek.' }, serum: { step: 3, name: 'Serum', product: 'Beauty of Joseon Glow Deep Serum', notes: 'Haftaya aydınlık bir başlangıç yapmak için antioksidan ve leke karşıtı destek.' } },
-                    // Salı (Tuesday)
-                    { tonik: { step: 2, name: 'Tonik/Mist', product: 'Bibimcos Cica Centella Toner', notes: 'Pazartesi akşamki bariyer onarımını yatıştırıcı bir tonikle desteklemek.' }, serum: { step: 3, name: 'Serum', product: 'Bibimcos Hyaluronic Booster Serum VEYA Estee Lauder ANR Serum', notes: 'Cildi akşamaki Retinal adımına hazırlamak için yoğun nemlendirme veya onarım.' } },
-                    // Çarşamba (Wednesday)
-                    { tonik: { step: 2, name: 'Tonik/Mist', product: 'Cosrx Comfort Ceramide Cream Mist', notes: 'Retinal sonrası cildi yatıştırmak ve anında konfor sağlamak.' }, serum: { step: 3, name: 'Serum', product: 'Bibimcos Hyaluronic Booster Serum VEYA Estee Lauder ANR Serum', notes: 'Retinal\'in olası kurutucu etkisini dengelemek için ekstra nem ve onarım.' } },
-                    // Perşembe (Thursday)
-                    { tonik: { step: 2, name: 'Tonik/Mist', product: 'Bibimcos Cica Centella Toner', notes: 'Peptitli onarım gecesinden sonra cildi sakin tutmak.' }, serum: { step: 3, name: 'Serum', product: 'Beauty of Joseon Glow Deep Serum', notes: 'Akşamki eksfoliasyon öncesi cilde aydınlatıcı ve antioksidan destek sağlamak.' } },
-                    // Cuma (Friday)
-                    { tonik: { step: 2, name: 'Tonik/Mist', product: 'Cosrx Comfort Ceramide Cream Mist', notes: 'Eksfoliasyon sonrası cildi yatıştırmak ve bariyeri desteklemek.' }, serum: { step: 3, name: 'Serum', product: 'Bibimcos Hyaluronic Booster Serum VEYA Estee Lauder ANR Serum', notes: 'Cildin nem seviyesini ve onarım kapasitesini en üst düzeye çıkarmak.' } },
-                    // Cumartesi (Saturday)
-                    { tonik: { step: 2, name: 'Tonik/Mist', product: 'Bibimcos Cica Centella Toner', notes: 'Cuma akşamki bariyer onarımını yatıştırıcı bir tonikle desteklemek.' }, serum: { step: 3, name: 'Serum', product: 'Beauty of Joseon Glow Deep Serum', notes: 'Akşamki leke odaklı rutini gündüzden desteklemeye başlamak.' } },
-                    // Pazar (Sunday)
-                    { tonik: { step: 2, name: 'Tonik/Mist', product: 'Bibimcos Rice Extract Toner', notes: 'Leke odaklı gecenin ardından aydınlatıcı etkiyi sürdürmek.' }, serum: { step: 3, name: 'Serum', product: 'Bibimcos Hyaluronic Booster Serum VEYA Estee Lauder ANR Serum', notes: 'Haftanın son gününde cilde saf nem, onarım ve dolgunluk kazandırmak.' } }
+                evening: [
+                    { step: "1. İlk Temizleme", product: "Skin401 Calendula Yağı", notes: "Miktar: 1-2 pompa. Alternatif: Mamonde Mint Cleansing Balm (Ceviz büyüklüğünde)." },
+                    { step: "2. İkinci Temizleme", product: "Skin401 Pirinç Özlü Jel", notes: "Miktar: Fındık büyüklüğünde." },
+                    { step: "3. Tonik", product: "Anyong Barrier Boost Toner", notes: "Miktar: Avuç içine bir miktar." },
+                    { step: "4. Serum", product: "Anyong Barrier Reform Serum", notes: "Miktar: 2-3 damla." },
+                    { step: "5. Göz Kremi", product: "Elensilia Collagen 80 Göz Kremi", notes: "Miktar: Her göz için yarım mercimek tanesi." },
+                    { step: "6. Nemlendirici", product: "Derma Factory Beta-Sitosterol Krem", notes: "Miktar: Nohut büyüklüğünde." }
                 ]
             },
-            pm: {
-                // Themed evening routines
-                'Nem & Bariyer': {
-                    days: ['Pazartesi', 'Cuma', 'Pazar'],
-                    steps: [
-                        { step: 1, name: 'İlk Temizleme', product: 'Mamonde Mint Cleansing Balm VEYA Skin401 Calendula Yağı', notes: 'Makyaj ve güneş kremini çözmek.' },
-                        { step: 2, name: 'İkinci Temizleme', product: 'Skin401 Pirinç Özlü Yüz Temizleme Jeli', notes: 'Cildi derinlemesine arındırmak.' },
-                        { step: 3, name: 'Tonik', product: 'Anyong Barrier Boost Toner', notes: 'Bariyeri güçlendirmek.' },
-                        { step: 4, name: 'Serum', product: 'Bibimcos Hyaluronic Booster Serum VEYA Estee Lauder ANR Serum', notes: 'Yoğun nem veya onarım takviyesi.' },
-                        { step: 5, name: 'Göz Kremi', product: 'Elensilia CPP Collagen 80 Intensive Eye Cream', notes: 'Gece boyu onarım için yoğun kolajen ve peptit desteği.' },
-                        { step: 6, name: 'Nemlendirici', product: 'Derma Factory Beta-Sitosterol 3% Cream', notes: 'Cilt bariyerini onarmak ve yatıştırmak.' }
-                    ]
-                },
-                'Retinal Gecesi': {
-                    days: ['Salı'],
-                    steps: [
-                        { step: 'Ekstra', name: 'Kil Maskesi (İhtiyaç Halinde)', product: 'Bibimcos Pore Clearing Clay Mask', notes: 'Gözenekleri arındırmak için temizlemeden sonra, nemlendirmeden önce.' },
-                        { step: 1, name: 'İlk Temizleme', product: 'Mamonde Mint Cleansing Balm VEYA Skin401 Calendula Yağı', notes: 'Makyaj ve güneş kremini çözmek.' },
-                        { step: 2, name: 'İkinci Temizleme', product: 'Skin401 Pirinç Özlü Yüz Temizleme Jeli', notes: 'Nazik temizlik.' },
-                        { step: 3, name: 'Tonik', product: 'Bibimcos Cica Centella Toner', notes: 'Cildi retinal öncesi yatıştırmak.' },
-                        { step: 4, name: 'Aktif Ürün', product: 'Derma Factory Retinal Cica Ampoule', notes: 'Cilt tamamen kuruduktan sonra bezelye tanesi kadar tüm yüze (göz ve ağız çevresi hariç) uygulanır.' },
-                        { step: 5, name: 'Göz Kremi', product: 'Elensilia CPP Collagen 80 Intensive Eye Cream', notes: 'Göz çevresini retinalden korumak ve tamponlamak.' },
-                        { step: 6, name: 'Nemlendirici', product: 'Anyong Barrier Renew Night Cream', notes: 'Cildi beslemek ve onarmak.' }
-                    ]
-                },
-                'Onarım & Besleme': {
-                    days: ['Çarşamba'],
-                    steps: [
-                        { step: 1, name: 'İlk Temizleme', product: 'Mamonde Mint Cleansing Balm VEYA Skin401 Calendula Yağı', notes: 'Makyaj ve güneş kremini çözmek.' },
-                        { step: 2, name: 'İkinci Temizleme', product: 'Skin401 Pirinç Özlü Yüz Temizleme Jeli', notes: 'Nazik temizlik.' },
-                        { step: 3, name: 'Tonik', product: 'Maxclinic %2 Melatonin Liposome Toner', notes: 'Antioksidan koruma ve onarım.' },
-                        { step: 4, name: 'Serum', product: 'Derma Factory Matrixyl 15% Multi Wrinkle Serum', notes: 'Kolajen üretimini tetiklemek.' },
-                        { step: 5, name: 'Göz Kremi', product: 'Elensilia CPP Collagen 80 Intensive Eye Cream', notes: 'Gece boyu onarım için yoğun kolajen ve peptit desteği.' },
-                        { step: 6, name: 'Nemlendirici', product: 'Anyong Barrier Renew Night Cream', notes: 'Cildi beslemek ve onarmak.' },
-                        { step: 7, name: 'Ekstra Bakım (Opsiyonel)', product: 'Medipeel Collagen Wrapping Mask VEYA Maxclinic BTX Mask', notes: 'Yoğun sıkılaştırıcı ve besleyici etki.' }
-                    ]
-                },
-                'Nazik Eksfoliasyon': {
-                    days: ['Perşembe'],
-                    steps: [
-                        { step: 1, name: 'İlk Temizleme', product: 'Mamonde Mint Cleansing Balm VEYA Skin401 Calendula Yağı', notes: 'Makyaj ve güneş kremini çözmek.' },
-                        { step: 2, name: 'İkinci Temizleme', product: 'Skin401 Pirinç Özlü Yüz Temizleme Jeli', notes: 'Nazik temizlik.' },
-                        { step: 3, name: 'Eksfoliasyon', product: 'Frankly Closer Pore Tightening Toner Pad', notes: 'Cilt kuruyken nazikçe silinir, 5-10 dk beklenir.' },
-                        { step: 4, name: 'Serum', product: 'Bibimcos Hyaluronic Booster Serum VEYA Estee Lauder ANR Serum', notes: 'Yoğun nem veya onarım takviyesi.' },
-                        { step: 5, name: 'Göz Kremi', product: 'Elensilia CPP Collagen 80 Intensive Eye Cream', notes: 'Göz çevresini korumak.' },
-                        { step: 6, name: 'Nemlendirici', product: 'Derma Factory Beta-Sitosterol 3% Cream', notes: 'Eksfoliasyon sonrası cildi yatıştırmak ve onarmak.' }
-                    ]
-                },
-                'Leke Odaklı Gece': {
-                    days: ['Cumartesi'],
-                    steps: [
-                        { step: 1, name: 'İlk Temizleme', product: 'Mamonde Mint Cleansing Balm VEYA Skin401 Calendula Yağı', notes: 'Makyaj ve güneş kremini çözmek.' },
-                        { step: 2, name: 'İkinci Temizleme', product: 'Skin401 Pirinç Özlü Yüz Temizleme Jeli', notes: 'Nazik temizlik.' },
-                        { step: 3, name: 'Tonik', product: 'Bibimcos Rice Extract Toner', notes: 'Aydınlatıcı etkiyi desteklemek.' },
-                        { step: 4, name: 'Serum', product: 'Beauty of Joseon Glow Deep Serum', notes: 'Leke oluşumunu engellemek.' },
-                        { step: 5, name: 'Göz Kremi', product: 'Elensilia CPP Collagen 80 Intensive Eye Cream', notes: 'Gece boyu onarım için yoğun kolajen ve peptit desteği.' },
-                        { step: 6, name: 'Nemlendirici', product: 'Derma Factory Tranexamic Acid 6% Cream', notes: 'Leke tedavisini mühürlemek ve güçlendirmek.' }
-                    ]
-                }
+            "Salı": {
+                theme: "Eksfoliasyon",
+                morning: [
+                    { step: "1. Temizleme", product: "Sadece Su veya Licapenin Köpük", notes: "Miktar: Köpük için 1 pompa." },
+                    { step: "2. Cihaz", product: "Foreo BEAR 2", notes: "Aromatica Aloe Vera Gel ile kullanılır. Cildin en dirençli olduğu günlerden biri, sıkılaştırma için uygun." },
+                    { step: "3. Tonik", product: "Bibimcos Cica Centella Toner", notes: "Miktar: Pamuğa veya avuca bir miktar." },
+                    { step: "4. Serum", product: "Beauty of Joseon Arbutin Serum", notes: "Miktar: 2-3 damla." },
+                    { step: "5. Göz Kremi", product: "Deoproce Super Berry Göz Kremi", notes: "Miktar: Her göz için yarım mercimek tanesi." },
+                    { step: "6. Nemlendirici", product: "Elensilia Collagen Intensive Cream", notes: "Miktar: Nohut büyüklüğünde." },
+                    { step: "7. Güneş Kremi", product: "Wiwify Centella Soothing Sun Serum", notes: "Miktar: 2 parmak kuralı." }
+                ],
+                evening: [
+                    { step: "1. İlk Temizleme", product: "Mamonde Mint Cleansing Balm", notes: "Miktar: Ceviz büyüklüğünde." },
+                    { step: "2. İkinci Temizleme", product: "Licapenin Sakura & Centella Köpük", notes: "Miktar: 1 pompa." },
+                    { step: "3. Eksfoliasyon", product: "Frankly Closer Pore Tightening Pad", notes: "Miktar: 1 adet ped. Alternatif (2 haftada bir): Kremi Toner Pad." },
+                    { step: "4. Tonik", product: "Anyong Barrier Boost Toner", notes: "Miktar: Avuç içine bir miktar." },
+                    { step: "5. Serum", product: "Bibimcos Hyaluronic Booster Serum", notes: "Miktar: 2-3 damla." },
+                    { step: "6. Göz Kremi", product: "Elensilia Collagen 80 Göz Kremi", notes: "Miktar: Her göz için yarım mercimek tanesi." },
+                    { step: "7. Nemlendirici", product: "Anyong Barrier Renew Night Cream", notes: "Miktar: Nohut büyüklüğünde." }
+                ]
+            },
+            "Çarşamba": {
+                theme: "Onarım & Besleme",
+                morning: [
+                    { step: "1. Temizleme", product: "Sadece Su", notes: "Foreo KULLANILMAZ. Salı akşamı eksfoliasyon yapıldığı için cilt dinlendirilir." },
+                    { step: "2. Tonik/Mist", product: "Avene Termal Su", notes: "Miktar: Yüze 2-3 fis." },
+                    { step: "3. Serum", product: "Derma Factory Matrixyl 15% Serum", notes: "Miktar: 2-3 damla." },
+                    { step: "4. Göz Kremi", product: "Deoproce Super Berry Göz Kremi", notes: "Miktar: Her göz için yarım mercimek tanesi." },
+                    { step: "5. Nemlendirici", product: "Derma Factory Beta-Sitosterol Krem", notes: "Miktar: Nohut büyüklüğünde." },
+                    { step: "6. Güneş Kremi", product: "Dr. Korea Hydrating Sun Cream", notes: "Miktar: 2 parmak kuralı." }
+                ],
+                evening: [
+                    { step: "1. İlk Temizleme", product: "Skin401 Calendula Yağı", notes: "Miktar: 1-2 pompa." },
+                    { step: "2. İkinci Temizleme", product: "Skin401 Pirinç Özlü Jel", notes: "Miktar: Fındık büyüklüğünde." },
+                    { step: "3. Tonik", product: "Maxclinic Melatonin Toner", notes: "Miktar: Pamuğa veya avuca bir miktar. Alternatif: Village 11 Factory Toner." },
+                    { step: "4. Serum", product: "Estée Lauder ANR Serum", notes: "Miktar: 3-4 damla." },
+                    { step: "5. Göz Kremi", product: "Elensilia Collagen 80 Göz Kremi", notes: "Miktar: Her göz için yarım mercimek tanesi." },
+                    { step: "6. Nemlendirici", product: "Anyong Barrier Renew Night Cream", notes: "Miktar: Nohut büyüklüğünde." },
+                    { step: "7. Ekstra Bakım", product: "Maxclinic Synergy Effect BTX Mask", notes: "(Opsiyonel) Serumdan sonra, nemlendiriciden önce uygulanır." }
+                ]
+            },
+            "Perşembe": {
+                theme: "Retinal Günü",
+                morning: [
+                    { step: "1. Temizleme", product: "Sadece Su veya Licapenin Köpük", notes: "Miktar: Köpük için 1 pompa." },
+                    { step: "2. Cihaz", product: "Foreo BEAR™ 2", notes: "Aromatica Aloe Vera Gel ile kullanılır. Akşamki retinal öncesi cildi canlandırmak için son fırsat." },
+                    { step: "3. Tonik/Mist", product: "Collachiol Cream Shot Ampoule Mist", notes: "Miktar: Yüze 2-3 fis." },
+                    { step: "4. Serum", product: "Anyong Barrier Reform Serum", notes: "Miktar: 2-3 damla." },
+                    { step: "5. Göz Kremi", product: "Elensilia Collagen 80 Göz Kremi", notes: "Miktar: Her göz için yarım mercimek tanesi." },
+                    { step: "6. Nemlendirici", product: "Derma Factory Tranexamic Acid Krem", notes: "Miktar: Nohut büyüklüğünde." },
+                    { step: "7. Güneş Kremi", product: "Wiwify Centella Soothing Sun Serum", notes: "Miktar: 2 parmak kuralı." }
+                ],
+                evening: [
+                    { step: "1. İlk Temizleme", product: "Mamonde Mint Cleansing Balm", notes: "Miktar: Ceviz büyüklüğünde." },
+                    { step: "2. İkinci Temizleme", product: "Licapenin Sakura & Centella Köpük", notes: "Miktar: 1 pompa." },
+                    { step: "3. Bekleme", product: "Cildin tamamen kurumasını beklemek (5-10 dakika).", notes: "" },
+                    { step: "4. Aktif Ürün", product: "Derma Factory Retinal Cica Ampoule", notes: "Miktar: 1 pompa veya bezelye tanesi kadar." },
+                    { step: "5. Bekleme", product: "15-20 dakika", notes: "Öneri: Bu sürede dudaklarınıza balm, ellerinize krem sürebilir veya sadece dinlenebilirsiniz." },
+                    { step: "6. Göz Kremi", product: "Elensilia Collagen 80 Göz Kremi", notes: "Miktar: Her göz için yarım mercimek tanesi." },
+                    { step: "7. Nemlendirici", product: "Derma Factory Beta-Sitosterol Krem", notes: "Miktar: Nohut büyüklüğünde." }
+                ]
+            },
+            "Cuma": {
+                theme: "Retinal Sonrası Onarım",
+                morning: [
+                    { step: "1. Temizleme", product: "Sadece Su", notes: "Foreo KULLANILMAZ. Retinal sonrası cilt dinlendirilir, hassasiyet riski alınmaz." },
+                    { step: "2. Tonik/Mist", product: "Cosrx Comfort Ceramide Mist", notes: "Miktar: Yüze 2-3 fis." },
+                    { step: "3. Serum", product: "Bibimcos Hyaluronic Booster Serum", notes: "Miktar: 3-4 damla." },
+                    { step: "4. Göz Kremi", product: "Deoproce Super Berry Göz Kremi", notes: "Miktar: Her göz için yarım mercimek tanesi." },
+                    { step: "5. Nemlendirici", product: "Derma Factory Beta-Sitosterol Krem", notes: "Miktar: Nohut büyüklüğünde." },
+                    { step: "6. Güneş Kremi", product: "Dr. Korea Hydrating Sun Cream", notes: "Miktar: 2 parmak kuralı." }
+                ],
+                evening: [
+                    { step: "1. İlk Temizleme", product: "Skin401 Calendula Yağı", notes: "Miktar: 1-2 pompa." },
+                    { step: "2. İkinci Temizleme", product: "Skin401 Pirinç Özlü Jel", notes: "Miktar: Fındık büyüklüğünde." },
+                    { step: "3. Tonik", product: "Anyong Barrier Boost Toner", notes: "Miktar: Avuç içine bir miktar." },
+                    { step: "4. Serum", product: "Estée Lauder ANR Serum", notes: "Miktar: 3-4 damla." },
+                    { step: "5. Göz Kremi", product: "Elensilia Collagen 80 Göz Kremi", notes: "Miktar: Her göz için yarım mercimek tanesi." },
+                    { step: "6. Nemlendirici", product: "Anyong Barrier Renew Night Cream", notes: "Miktar: Nohut büyüklüğünde." }
+                ]
+            },
+            "Cumartesi": {
+                theme: "Leke Odaklı Gece",
+                morning: [
+                    { step: "1. Temizleme", product: "Licapenin Sakura & Centella Köpük", notes: "Miktar: 1 pompa." },
+                    { step: "2. Cihaz", product: "Foreo BEAR™ 2", notes: "Aromatica Aloe Vera Gel ile kullanılır. Hafta sonuna taze bir başlangıç yapmak için." },
+                    { step: "3. Tonik", product: "Bibimcos Rice Extract Toner", notes: "Miktar: Pamuğa veya avuca bir miktar." },
+                    { step: "4. Serum", product: "Beauty of Joseon Arbutin Serum", notes: "Miktar: 2-3 damla. Alternatif: Elensilia Radiance Alpha Arbutin Ampoule." },
+                    { step: "5. Göz Kremi", product: "Elensilia Collagen 80 Göz Kremi", notes: "Miktar: Her göz için yarım mercimek tanesi." },
+                    { step: "6. Nemlendirici", product: "Deoproce Snail Recovery Cream", notes: "Miktar: Nohut büyüklüğünde." },
+                    { step: "7. Güneş Kremi", product: "Wiwify Centella Soothing Sun Serum", notes: "Miktar: 2 parmak kuralı." }
+                ],
+                evening: [
+                    { step: "1. İlk Temizleme", product: "Skin401 Calendula Yağı", notes: "Miktar: 1-2 pompa." },
+                    { step: "2. İkinci Temizleme", product: "Licapenin Sakura & Centella Köpük", notes: "Miktar: 1 pompa." },
+                    { step: "3. Tonik", product: "Bibimcos Cica Centella Toner", notes: "Miktar: Pamuğa veya avuca bir miktar." },
+                    { step: "4. Leke Tedavisi", product: "Derma Factory Tranexamic Acid Krem", notes: "Miktar: Nohut büyüklüğünde. Serum yerine kullanılır." },
+                    { step: "5. Göz Kremi", product: "Deoproce Super Berry Göz Kremi", notes: "Miktar: Her göz için yarım mercimek tanesi." },
+                    { step: "6. Nemlendirici", product: "Elensilia Collagen Intensive Cream", notes: "Miktar: Nohut büyüklüğünde." },
+                    { step: "7. Lokal Bakım", product: "Yeppuda Spot Gel (Gerekirse)", notes: "Miktar: Toplu iğne başı kadar. Alternatif: Vitayes SOS Roll-on." }
+                ]
+            },
+            "Pazar": {
+                theme: "Onarım & Keyif",
+                morning: [
+                    { step: "1. Temizleme", product: "Sadece Su", notes: "Cildi dinlendirmek." },
+                    { step: "2. Cihaz", product: "Foreo BEAR™ 2", notes: "Aromatica Aloe Vera Gel ile kullanılır. Haftayı kapatırken rahatlatıcı bir bakım." },
+                    { step: "3. Göz Maskesi", product: "Maxclinic Calendula Eye Patch", notes: "(Opsiyonel) Göz çevresini canlandırmak." },
+                    { step: "4. Tonik/Mist", product: "Avene Termal Su", notes: "Miktar: Yüze 2-3 fis." },
+                    { step: "5. Serum", product: "Bibimcos Hyaluronic Booster Serum", notes: "Miktar: 2-3 damla." },
+                    { step: "6. Göz Kremi", product: "Elensilia Collagen 80 Göz Kremi", notes: "Miktar: Her göz için yarım mercimek tanesi." },
+                    { step: "7. Nemlendirici", product: "Deoproce Snail Recovery Cream", notes: "Miktar: Nohut büyüklüğünde. Hafif yapısıyla sabaha daha uygun." },
+                    { step: "8. Güneş Kremi", product: "Dr. Korea Hydrating Sun Cream", notes: "Miktar: 2 parmak kuralı." }
+                ],
+                evening: [
+                    { step: "1. İlk Temizleme", product: "Mamonde Mint Cleansing Balm", notes: "Miktar: Ceviz büyüklüğünde." },
+                    { step: "2. İkinci Temizleme", product: "Skin401 Pirinç Özlü Jel", notes: "Miktar: Fındık büyüklüğünde." },
+                    { step: "3. Maske", product: "Bibimcos Pore Clearing Clay Mask", notes: "(İhtiyaç Halinde) Miktar: Yüze ince bir tabaka." },
+                    { step: "4. Tonik", product: "Maxclinic Melatonin Toner", notes: "Miktar: Pamuğa veya avuca bir miktar." },
+                    { step: "5. Serum", product: "Anyong Barrier Reform Serum", notes: "Miktar: 2-3 damla. Alternatif: Matrixyl Serum." },
+                    { step: "6. Göz Kremi", product: "Elensilia Collagen 80 Göz Kremi", notes: "Miktar: Her göz için yarım mercimek tanesi." },
+                    { step: "7. Nemlendirici", product: "Derma Factory Beta-Sitosterol Krem", notes: "Miktar: Nohut büyüklüğünde." },
+                    { step: "8. Ekstra Bakım", product: "Anyong Hydra-Repair Sleeping Mask", notes: "(Opsiyonel) Nemlendiriciden sonra ince bir katman." }
+                ]
             }
         };
 
-        const cycleGuide = [
-            { phase: 'Faz 1: Menstrüasyon (1-6. Günler)', skin: 'Östrojen ve progesteron en düşük seviyededir. Cilt daha kuru, hassas ve donuk olabilir. Cilt bariyeri daha zayıftır.', strategy: 'Yoğun nemlendirme, yatıştırma ve onarım.', adaptation: 'Bu hafta boyunca, haftalık planınızdaki "Nem & Bariyer Yenileme Gecesi" protokolünü ana rutininiz olarak benimseyin. Retinal ve asitli pedler gibi güçlü aktiflerden kaçının. Cildinizi nazik temizleyiciler, bariyer onarıcı tonikler (Anyong) ve zengin nemlendiricilerle (Derma Factory Beta-Sitosterol) destekleyin.' },
-            { phase: 'Faz 2: Foliküler Faz (7-12. Günler)', skin: 'Östrojen seviyeleri yükselir. Cilt kendini yeniler, kolajen üretimi artar, daha nemli, dolgun ve parlak görünür. Cildin en dirençli olduğu dönemdir.', strategy: 'Koruma, bakım ve aktifleri kullanma.', adaptation: 'Bu, oluşturulan 7 günlük haftalık protokolü harfiyen uygulamak için en ideal zamandır. Cildiniz Retinal, Peptitler ve Eksfoliyanlar gibi aktif içeriklerden en iyi şekilde faydalanacaktır.' },
-            { phase: 'Faz 3: Ovülasyon (13-16. Günler)', skin: 'Östrojen zirve yapar, cilt parlaktır. Ancak testosterondaki artış sebum (yağ) üretimini tetikleyebilir ve gözeneklerin tıkanmasına neden olabilir.', strategy: 'Derinlemesine temizlik ve önleyici bakım.', adaptation: 'Haftalık rutininize devam edin, ancak bu dönemde Pazar günkü kil maskesi uygulamasını (Bibimcos Pore Clearing Clay Mask) mutlaka yapın. Bu, artan yağı dengelemeye ve gözeneklerin tıkanmasını önlemeye yardımcı olacaktır.' },
-            { phase: 'Faz 4: Luteal Faz (17-28. Günler)', skin: 'Progesteron ve testosteron yükselir, sebum üretimi artar. Gözenekler tıkanabilir ve iltihaplı hormonal akneler ortaya çıkabilir.', strategy: 'Yağ kontrolü, iltihap önleme ve leke tedavisi.', adaptation: 'Bu dönemde "Leke Odaklı Gece" (Cumartesi) ve "Nazik Eksfoliasyon Gecesi" (Perşembe) protokolleri kritik öneme sahiptir. Aktif sivilceler için Yeppda AHA-BHA-PHA Spot Gel\'i sadece sivilcenin üzerine uygulayın. Cildi yatıştırmak için Cica içeren ürünlere ağırlık verin.' }
+        const cycleSyncingData = [
+            {
+                phase: "Faz 1: Menstrüasyon (1-6. Günler)",
+                skinCondition: "Hormonlar en düşük seviyededir. Cilt daha kuru, hassas ve donuk olabilir. Cilt bariyeri zayıftır.",
+                strategy: "Yoğun nemlendirme, yatıştırma ve onarım.",
+                adaptation: "Bu hafta boyunca, haftalık planınızdaki <strong>Pazartesi (Nem & Bariyer)</strong> protokolünü ana rutininiz olarak benimseyin. Retinal ve asitli pedler gibi güçlü aktiflerden kesinlikle kaçının. Cildinizi nazik temizleyiciler, bariyer onarıcı tonikler ve zengin nemlendiricilerle destekleyin."
+            },
+            {
+                phase: "Faz 2: Foliküler Faz (7-12. Günler)",
+                skinCondition: "Östrojen yükselir. Cilt kendini yeniler, kolajen üretimi artar, daha nemli ve parlak görünür. Cildin en dirençli olduğu dönemdir.",
+                strategy: "Koruma, bakım ve aktifleri kullanma.",
+                adaptation: "Bu, oluşturulan 7 günlük haftalık protokolü harfiyen uygulamak için en ideal zamandır. Cildiniz Retinal, Peptitler ve Eksfoliyanlar gibi aktif içeriklerden en iyi şekilde faydalanacaktır."
+            },
+            {
+                phase: "Faz 3: Ovülasyon (13-16. Günler)",
+                skinCondition: "Östrojen zirve yapar, cilt parlaktır. Ancak testosterondaki artış sebum (yağ) üretimini tetikleyebilir ve gözeneklerin tıkanmasına neden olabilir.",
+                strategy: "Derinlemesine temizlik ve önleyici bakım.",
+                adaptation: "Haftalık rutininize devam edin, ancak bu dönemde <strong>Pazar günkü kil maskesi</strong> uygulamasını (Bibimcos Pore Clearing Clay Mask) mutlaka yapın. Bu, artan yağı dengelemeye ve gözeneklerin tıkanmasını önlemeye yardımcı olacaktır."
+            },
+            {
+                phase: "Faz 4: Luteal Faz (17-28. Günler)",
+                skinCondition: "Progesteron ve testosteron yükselir, sebum üretimi artar. Gözenekler tıkanabilir ve iltihaplı hormonal akneler ortaya çıkabilir.",
+                strategy: "Yağ kontrolü, iltihap önleme ve leke tedavisi.",
+                adaptation: "Bu dönemde <strong>Salı (Eksfoliasyon)</strong> ve <strong>Cumartesi (Leke Odaklı Gece)</strong> protokolleri kritik öneme sahiptir. Ortaya çıkan aktif sivilceler için Yeppuda Spot Gel'i elinizin altında bulundurun ve sadece sivilcenin üzerine uygulayın. Cildi yatıştırmak için Cica içeren ürünlere ağırlık verin."
+            }
         ];
 
-        const dayNames = ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'];
+        // --- DOM ELEMENTS ---
+        const todayView = document.getElementById('today-view');
+        const weeklyView = document.getElementById('weekly-view');
+        const cycleView = document.getElementById('cycle-view');
+        const todayTab = document.getElementById('today-tab');
+        const weeklyTab = document.getElementById('weekly-tab');
+        const cycleTab = document.getElementById('cycle-tab');
+        const todayRoutineContainer = document.getElementById('today-routine-container');
+        const routineGrid = document.getElementById('routine-grid');
+        const cyclePhasesContainer = document.getElementById('cycle-phases-container');
 
-        // --- APP LOGIC ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const today = new Date();
-            const dayIndex = today.getDay()-1;
-            const dayName = dayNames[dayIndex];
+        // --- FUNCTIONS ---
 
-            // Set current date display
-            document.getElementById('current-date').textContent = `${today.toLocaleDateString('tr-TR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`;
+        /**
+         * Switches between the views.
+         * @param {string} viewName - The name of the view to show ('today', 'weekly', or 'cycle').
+         */
+        function showView(viewName) {
+            todayView.style.display = 'none';
+            weeklyView.style.display = 'none';
+            cycleView.style.display = 'none';
 
-            // --- RENDER FUNCTIONS ---
-            const createProductLink = (productName) => {
-                // Find the base product key even for VEYA/OR cases
-                let baseProductKey = productName;
-                if (productName.includes('VEYA')) {
-                    baseProductKey = productName.split(' VEYA ')[0].trim();
-                }
-                // Handle special case for the first cleanser
-                if (productName.startsWith('Sadece Su')) {
-                     baseProductKey = 'Skin401 Pirinç Özlü Yüz Temizleme Jeli';
-                }
+            todayTab.classList.remove('tab-active');
+            weeklyTab.classList.remove('tab-active');
+            cycleTab.classList.remove('tab-active');
 
-                if (products[baseProductKey] || products[productName]) {
-                    return `<span class="product-link" data-product="${productName}">${productName}</span>`;
-                }
-                return productName;
-            };
+            if (viewName === 'today') {
+                todayView.style.display = 'block';
+                todayTab.classList.add('tab-active');
+            } else if (viewName === 'weekly') {
+                weeklyView.style.display = 'block';
+                weeklyTab.classList.add('tab-active');
+            } else { // 'cycle'
+                cycleView.style.display = 'block';
+                cycleTab.classList.add('tab-active');
+            }
+        }
 
-            const renderRoutine = (routineSteps) => {
-                return routineSteps.map(step => `
-                    <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-200 flex items-start space-x-4">
-                        <div class="flex-shrink-0 bg-indigo-100 text-indigo-600 rounded-full h-10 w-10 flex items-center justify-center font-bold text-sm">
-                            ${step.step}
+        /**
+         * Creates the HTML for a single routine step.
+         * @param {object} item - The routine step data.
+         * @returns {string} - The HTML string for the routine step.
+         */
+        function createRoutineStepHTML(item) {
+            return `
+                <div class="flex items-start space-x-3 py-2">
+                    <div class="flex-shrink-0 h-6 w-6 flex items-center justify-center bg-gray-100 rounded-full text-sm font-bold text-gray-600">${item.step.split('.')[0]}</div>
+                    <div>
+                        <p class="font-semibold text-gray-800">${item.product}</p>
+                        <p class="text-gray-500 text-sm">${item.notes}</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        /**
+         * Creates the HTML for a single day's card.
+         * @param {string} day - The name of the day.
+         * @param {boolean} isToday - Flag to add special styling.
+         * @returns {string} - The HTML string for the day card.
+         */
+        function createDayCardHTML(day, isToday = false) {
+            const data = skincareData[day];
+            return `
+                <div class="bg-white rounded-2xl shadow-md overflow-hidden ${isToday ? 'border-2 border-indigo-400 ring-4 ring-indigo-100' : 'transform transition-transform duration-300 hover:scale-105'}">
+                    <div class="p-5">
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-900">${day}</h3>
+                                <p class="text-sm text-indigo-600 font-medium">${data.theme}</p>
+                            </div>
+                            ${isToday ? '<span class="text-xs font-semibold bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full">Bugün</span>' : ''}
                         </div>
+
+                        <!-- Morning Routine -->
+                        <div class="mb-5">
+                            <h4 class="flex items-center text-lg font-semibold mb-2 text-gray-700">
+                                <i data-lucide="sun" class="w-5 h-5 mr-2 text-yellow-500"></i>
+                                Sabah
+                            </h4>
+                            <div class="divide-y divide-gray-100">
+                                ${data.morning.map(createRoutineStepHTML).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Evening Routine -->
                         <div>
-                            <h4 class="font-semibold text-gray-800">${step.name}</h4>
-                            <p class="text-gray-700 font-medium">${createProductLink(step.product)}</p>
-                            <p class="text-sm text-gray-500 mt-1">${step.notes}</p>
+                            <h4 class="flex items-center text-lg font-semibold mb-2 text-gray-700">
+                                <i data-lucide="moon" class="w-5 h-5 mr-2 text-blue-500"></i>
+                                Akşam
+                            </h4>
+                            <div class="divide-y divide-gray-100">
+                                ${data.evening.map(createRoutineStepHTML).join('')}
+                            </div>
                         </div>
                     </div>
-                `).join('');
-            };
+                </div>
+            `;
+        }
 
-            const renderToday = () => {
-                // AM Routine
-                const amSpecifics = weeklyRoutine.am.days[dayIndex];
-                const amRoutine = [...weeklyRoutine.am.base, amSpecifics.tonik, amSpecifics.serum]
-                    .sort((a, b) => a.step - b.step);
+        /**
+         * Populates the today's routine view.
+         */
+        function populateTodayRoutine() {
+            const today = new Date().toLocaleString('tr-TR', { weekday: 'long' });
+            const todayKey = Object.keys(skincareData).find(day => day.toLowerCase() === today.toLowerCase());
+            if (todayKey) {
+                todayRoutineContainer.innerHTML = createDayCardHTML(todayKey, true);
+            }
+        }
 
-                // PM Routine
-                let pmThemeName = '';
-                let pmRoutine = [];
-                for (const theme in weeklyRoutine.pm) {
-                    if (weeklyRoutine.pm[theme].days.includes(dayName)) {
-                        pmThemeName = theme;
-                        pmRoutine = weeklyRoutine.pm[theme].steps;
-                        break;
-                    }
-                }
+        /**
+         * Populates the weekly routine grid with data.
+         */
+        function populateWeeklyRoutine() {
+            const days = Object.keys(skincareData);
+            routineGrid.innerHTML = days.map(day => createDayCardHTML(day)).join('');
+        }
 
-                const todayContent = `
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <div class="flex items-center mb-4">
-                                <i class="fas fa-sun text-2xl text-yellow-500 mr-3"></i>
-                                <div>
-                                    <h2 class="text-2xl font-bold">Sabah Rutini (AM)</h2>
-                                    <h3 class="text-lg font-medium text-indigo-600">Genel Bakım</h3>
-                                </div>
-                            </div>
-                            <div class="space-y-4">
-                                ${renderRoutine(amRoutine)}
-                            </div>
+        /**
+         * Populates the cycle syncing view with data.
+         */
+        function populateCycleSyncing() {
+            cyclePhasesContainer.innerHTML = cycleSyncingData.map(phase => {
+                return `
+                    <div class="flex flex-col sm:flex-row items-start gap-6 p-4 border-l-4 border-indigo-200 rounded-r-lg bg-gray-50">
+                        <div class="flex-shrink-0">
+                            <h3 class="text-lg font-bold text-gray-900">${phase.phase}</h3>
+                            <p class="text-sm text-gray-500 italic mt-1">"${phase.strategy}"</p>
                         </div>
-                        <div>
-                            <div class="flex items-center mb-4">
-                                <i class="fas fa-moon text-2xl text-indigo-500 mr-3"></i>
-                                <div>
-                                    <h2 class="text-2xl font-bold">Akşam Rutini (PM)</h2>
-                                    <h3 class="text-lg font-medium text-indigo-600">${pmThemeName}</h3>
-                                </div>
-                            </div>
-                            <div class="space-y-4">
-                                ${renderRoutine(pmRoutine)}
-                            </div>
+                        <div class="flex-grow">
+                             <p class="mb-2"><strong class="font-semibold text-gray-700">Cilt Durumu:</strong> ${phase.skinCondition}</p>
+                             <p><strong class="font-semibold text-gray-700">Rutin Uyarlaması:</strong> ${phase.adaptation}</p>
                         </div>
                     </div>
                 `;
-                document.getElementById('content-today').innerHTML = todayContent;
-            };
+            }).join('');
+        }
 
-            const renderWeekly = () => {
-                const weeklyContent = dayNames.map((name, index) => {
-                    const amSpecifics = weeklyRoutine.am.days[index];
-                    const amRoutine = [...weeklyRoutine.am.base, amSpecifics.tonik, amSpecifics.serum].sort((a,b) => a.step - b.step);
-                    
-                    let pmThemeName = '';
-                    let pmRoutine = [];
-                    for (const theme in weeklyRoutine.pm) {
-                        if (weeklyRoutine.pm[theme].days.includes(name)) {
-                            pmThemeName = theme;
-                            pmRoutine = weeklyRoutine.pm[theme].steps;
-                            break;
-                        }
-                    }
 
-                    return `
-                        <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 mb-6">
-                            <h3 class="text-2xl font-bold mb-4 border-b pb-2">${name}</h3>
-                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                <div>
-                                    <h4 class="font-bold text-lg mb-2 flex items-center"><i class="fas fa-sun text-yellow-500 mr-2"></i>Sabah (AM)</h4>
-                                    <ul class="space-y-2 text-sm">
-                                        ${amRoutine.map(s => `<li><strong>${s.name}:</strong> ${createProductLink(s.product)}</li>`).join('')}
-                                    </ul>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-lg mb-2 flex items-center"><i class="fas fa-moon text-indigo-500 mr-2"></i>Akşam (PM) - <span class="text-indigo-600 ml-1">${pmThemeName}</span></h4>
-                                    <ul class="space-y-2 text-sm">
-                                        ${pmRoutine.map(s => `<li><strong>${s.name}:</strong> ${createProductLink(s.product)}</li>`).join('')}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-                document.getElementById('content-weekly').innerHTML = weeklyContent;
-            };
+        // --- INITIALIZATION ---
+        
+        // This function runs when the page is fully loaded.
+        window.onload = () => {
+            populateTodayRoutine();
+            populateWeeklyRoutine();
+            populateCycleSyncing();
+            lucide.createIcons(); // Initialize Lucide icons
+        };
 
-            const renderCycleGuide = () => {
-                const cycleContent = cycleGuide.map(phase => `
-                    <div class="bg-white p-6 rounded-xl shadow-md border border-gray-200 mb-6">
-                        <h3 class="text-xl font-bold text-indigo-700 mb-3">${phase.phase}</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <h4 class="font-semibold mb-2">Cilt Durumu</h4>
-                                <p class="text-gray-600">${phase.skin}</p>
-                            </div>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <h4 class="font-semibold mb-2">Strateji</h4>
-                                <p class="text-gray-600">${phase.strategy}</p>
-                            </div>
-                            <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
-                                <h4 class="font-semibold mb-2">Rutin Uyarlaması</h4>
-                                <p class="text-gray-700">${phase.adaptation}</p>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-                document.getElementById('content-cycle').innerHTML = cycleContent;
-            };
-
-            const renderProducts = () => {
-                const productCategories = {
-                    'TEMİZLEYİCİLER': [],
-                    'TONİKLER & MİSTLER': [],
-                    'SERUMLAR': [],
-                    'NEMLENDİRİCİLER & GÖZ KREMLERİ': [],
-                    'PEDLER & MASKELER & NOKTASAL ÜRÜNLER': [],
-                    'GÜNEŞ KORUYUCULAR': []
-                };
-
-                for (const [name, details] of Object.entries(products)) {
-                    // Skip combined/generic keys
-                    if (name.includes('VEYA') || name.startsWith('Sadece Su')) continue;
-
-                    const type = details.type.toLowerCase();
-                    if (type.includes('temizle')) productCategories['TEMİZLEYİCİLER'].push({ name, ...details });
-                    else if (type.includes('tonik') || type.includes('MIST')) productCategories['TONİKLER & MİSTLER'].push({ name, ...details });
-                    else if (type.includes('güneş')) productCategories['GÜNEŞ KORUYUCULAR'].push({ name, ...details });
-                    else if (type.includes('serum')) productCategories['SERUMLAR'].push({ name, ...details });
-                    else if (type.includes('krem') || type.includes('MASK')) productCategories['NEMLENDİRİCİLER & GÖZ KREMLERİ'].push({ name, ...details });
-                    else if (type.includes('ped') || type.includes('JEL') || type.includes('MASKE')) productCategories['PEDLER & MASKELER & NOKTASAL ÜRÜNLER'].push({ name, ...details });
-                }
-
-                const productContent = Object.entries(productCategories).map(([category, items]) => `
-                    <div class="mb-8">
-                        <h3 class="text-2xl font-bold mb-4 border-b-2 border-indigo-500 pb-2">${category}</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            ${items.map(p => `
-                                <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex flex-col justify-between ${p.role.includes('Önerilmez') ? 'bg-red-50 border-red-200' : ''}">
-                                    <div>
-                                        <h4 class="font-bold">${p.name}</h4>
-                                        <p class="text-sm text-indigo-600 font-medium">${p.type}</p>
-                                        <p class="text-sm text-gray-500 mt-2"><strong>İşlev:</strong> ${p.func}</p>
-                                        <p class="text-xs text-gray-500 mt-1"><strong>Aktifler:</strong> ${p.actives}</p>
-                                    </div>
-                                    <button class="product-link text-sm text-left mt-3" data-product="${p.name}">Detayları gör &rarr;</button>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `).join('');
-                document.getElementById('content-products').innerHTML = productContent;
-            };
-
-            // --- TAB HANDLING ---
-            const tabs = document.querySelectorAll('nav button');
-            const contentAreas = document.querySelectorAll('#content-area > div');
-
-            const switchTab = (targetId) => {
-                tabs.forEach(tab => {
-                    const isActive = tab.id === `tab-${targetId}`;
-                    tab.classList.toggle('tab-active', isActive);
-                    tab.classList.toggle('tab-inactive', !isActive);
-                });
-                contentAreas.forEach(content => {
-                    content.classList.toggle('hidden', content.id !== `content-${targetId}`);
-                });
-            };
-
-            tabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    const targetId = tab.id.replace('tab-', '');
-                    switchTab(targetId);
-                });
-            });
-
-            // --- MODAL HANDLING ---
-            const modal = document.getElementById('product-modal');
-            const modalContentBox = document.getElementById('modal-content-box');
-            const modalCloseBtn = document.getElementById('modal-close-btn');
-
-            const openModal = (productName) => {
-                let productKey = productName;
-                if (productName.includes('VEYA')) {
-                    productKey = productName.split(' VEYA ')[0].trim();
-                }
-                 if (productName.startsWith('Sadece Su')) {
-                     productKey = 'Skin401 Pirinç Özlü Yüz Temizleme Jeli';
-                }
-
-                const details = products[productKey] || products[productName];
-                if (!details) return;
-
-                document.getElementById('modal-product-name').textContent = productName;
-                document.getElementById('modal-product-details').innerHTML = `
-                    <p><strong class="font-semibold text-gray-600">Ürün Tipi:</strong> ${details.type}</p>
-                    <p><strong class="font-semibold text-gray-600">Ana Aktifler:</strong> ${details.actives}</p>
-                    <p><strong class="font-semibold text-gray-600">Birincil İşlev:</strong> ${details.func}</p>
-                    <p><strong class="font-semibold text-gray-600">Rutindeki Rolü:</strong> <span class="font-medium ${details.role.includes('Önerilmez') ? 'text-red-600' : 'text-green-700'}">${details.role}</span></p>
-                    <div class="mt-4 pt-4 border-t">
-                        <h5 class="font-semibold text-gray-600 mb-2">Uzman Notları</h5>
-                        <p class="text-sm bg-gray-100 p-3 rounded-md">${details.notes}</p>
-                    </div>
-                `;
-
-                modal.classList.remove('opacity-0', 'pointer-events-none');
-                modalContentBox.classList.remove('scale-95');
-            };
-
-            const closeModal = () => {
-                modal.classList.add('opacity-0');
-                modalContentBox.classList.add('scale-95');
-                setTimeout(() => {
-                    modal.classList.add('pointer-events-none');
-                }, 250);
-            };
-
-            document.body.addEventListener('click', (e) => {
-                if (e.target.matches('.product-link')) {
-                    const productName = e.target.dataset.product;
-                    openModal(productName);
-                }
-            });
-
-            modalCloseBtn.addEventListener('click', closeModal);
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeModal();
-                }
-            });
-
-            // Initial Load
-            renderToday();
-            renderWeekly();
-            renderCycleGuide();
-            renderProducts();
-            switchTab('today');
-        });
     </script>
-
 </body>
 </html>

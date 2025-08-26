@@ -1,0 +1,17 @@
+{
+  "name": "Skincare",
+  "short_name": "Skincare",
+  "description": "An app for my daily skincare",
+  "start_url": "/Skincare-App/",
+  "scope": "/Skincare-App/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/Skincare-App/icons/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

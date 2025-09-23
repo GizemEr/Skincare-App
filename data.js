@@ -1,11 +1,11 @@
 const skincareData = {
   "Pazartesi": {
-    "theme": "Nem & Bariyer",
+    "theme": "Nem & Bariyer Onarımı 💧",
     "morning": [
       {
         "step": "1. Temizleme",
-        "product": "Sadece Su veya Licapenin Köpük",
-        "notes": "Miktar: Köpük için 1 pompa. Cildiniz gece yağlanmadıysa sadece su yeterlidir."
+        "product": "Sadece Su veya Round Lab Pine Calming Cica Cleanser",
+        "notes": "Miktar: Fındık büyüklüğünde. Cildiniz gece yağlanmadıysa sadece su yeterlidir."
       },
       {
         "step": "2. Cihaz",
@@ -19,7 +19,7 @@ const skincareData = {
       },
       {
         "step": "4. Serum",
-        "product": "Bibimcos Hyaluronic Booster Serum",
+        "product": "Frankly Heyday Pantenol Serumu",
         "notes": "Miktar: 2-3 damla. Cilde gün boyu sürecek temel nemi sağlar."
       },
       {
@@ -46,7 +46,7 @@ const skincareData = {
       },
       {
         "step": "2. İkinci Temizleme",
-        "product": "Skin41 Pirinç Özlü Jel",
+        "product": "Skin401 Pirinç Özlü Jel",
         "notes": "Miktar: Fındık büyüklüğünde."
       },
       {
@@ -56,8 +56,8 @@ const skincareData = {
       },
       {
         "step": "4. Serum",
-        "product": "Anyong Barrier Reform Serum",
-        "notes": "Miktar: 2-3 damla. Cildin savunma katmanını güçlendirerek haftaya hazırlar."
+        "product": "Frankly Heyday Pantenol Serumu",
+        "notes": "Miktar: 2-3 damla. Pantenol ile cildin savunma katmanını yatıştırarak ve nemlendirerek haftaya hazırlar."
       },
       {
         "step": "5. Göz Kremi",
@@ -72,12 +72,12 @@ const skincareData = {
     ]
   },
   "Salı": {
-    "theme": "Eksfoliasyon",
+    "theme": "Eksfoliasyon 🧪",
     "morning": [
       {
         "step": "1. Temizleme",
-        "product": "Licapenin Köpük",
-        "notes": "Miktar: 1 pompa."
+        "product": "Round Lab Pine Calming Cica Cleanser",
+        "notes": "Miktar: Fındık büyüklüğünde."
       },
       {
         "step": "2. Cihaz",
@@ -118,8 +118,8 @@ const skincareData = {
       },
       {
         "step": "2. İkinci Temizleme",
-        "product": "Licapenin Sakura & Centella Köpük",
-        "notes": "Miktar: 1 pompa."
+        "product": "Round Lab Pine Calming Cica Cleanser",
+        "notes": "Miktar: Fındık büyüklüğünde."
       },
       {
         "step": "3. Maske (Opsiyonel)",
@@ -138,8 +138,8 @@ const skincareData = {
       },
       {
         "step": "6. Serum",
-        "product": "Bibimcos Hyaluronic Booster Serum",
-        "notes": "Miktar: 2-3 damla. Arındırılmış cilde nemi geri kazandırır."
+        "product": "Frankly Heyday Pantenol Serumu",
+        "notes": "Miktar: 2-3 damla. Arındırılmış cilde nemi geri kazandırır ve cildi yatıştırır."
       },
       {
         "step": "7. Göz Kremi",
@@ -154,7 +154,7 @@ const skincareData = {
     ]
   },
   "Çarşamba": {
-    "theme": "Onarım & Besleme",
+    "theme": "Onarım & Besleme ✨",
     "morning": [
       {
         "step": "1. Temizleme",
@@ -195,7 +195,7 @@ const skincareData = {
       },
       {
         "step": "2. İkinci Temizleme",
-        "product": "Skin41 Pirinç Özlü Jel",
+        "product": "Skin401 Pirinç Özlü Jel",
         "notes": "Miktar: Fındık büyüklüğünde."
       },
       {
@@ -226,7 +226,7 @@ const skincareData = {
     ]
   },
   "Perşembe": {
-    "theme": "Retinal Günü",
+    "theme": "Cilt Yenileme (Retinal Günü) 🚀",
     "morning": [
       {
         "step": "1. Temizleme",
@@ -245,8 +245,8 @@ const skincareData = {
       },
       {
         "step": "4. Serum",
-        "product": "Anyong Barrier Reform Serum",
-        "notes": "Miktar: 2-3 damla."
+        "product": "Frankly Heyday Pantenol Serumu",
+        "notes": "Miktar: 2-3 damla. Akşamki retinal öncesi cildin bariyerini destekler ve nemlendirir."
       },
       {
         "step": "5. Göz Kremi",
@@ -272,8 +272,8 @@ const skincareData = {
       },
       {
         "step": "2. İkinci Temizleme",
-        "product": "Licapenin Sakura & Centella Köpük",
-        "notes": "Miktar: 1 pompa."
+        "product": "Round Lab Pine Calming Cica Cleanser",
+        "notes": "Miktar: Fındık büyüklüğünde."
       },
       {
         "step": "3. Tonik",
@@ -282,7 +282,7 @@ const skincareData = {
       },
       {
         "step": "4. Serum",
-        "product": "Bibimcos Hyaluronic Booster Serum",
+        "product": "Frankly Heyday Pantenol Serumu",
         "notes": "Miktar: 2-3 damla. Retinal için nemli bir tampon katman oluşturarak hassasiyeti azaltır."
       },
       {
@@ -313,7 +313,7 @@ const skincareData = {
     ]
   },
   "Cuma": {
-    "theme": "Retinal Sonrası Onarım",
+    "theme": "Retinal Sonrası Onarım 🩹",
     "morning": [
       {
         "step": "1. Temizleme",
@@ -327,8 +327,8 @@ const skincareData = {
       },
       {
         "step": "3. Serum",
-        "product": "Bibimcos Hyaluronic Booster Serum",
-        "notes": "Miktar: 3-4 damla. Cildin kaybettiği nemi yoğun bir şekilde geri verir."
+        "product": "Frankly Heyday Pantenol Serumu",
+        "notes": "Miktar: 3-4 damla. Pantenol ile cildin onarılmasına yardım eder ve kaybettiği nemi yoğun bir şekilde geri verir."
       },
       {
         "step": "4. Göz Kremi",
@@ -354,7 +354,7 @@ const skincareData = {
       },
       {
         "step": "2. İkinci Temizleme",
-        "product": "Skin41 Pirinç Özlü Jel",
+        "product": "Skin401 Pirinç Özlü Jel",
         "notes": "Miktar: Fındık büyüklüğünde."
       },
       {
@@ -365,7 +365,7 @@ const skincareData = {
       {
         "step": "4. Serum",
         "product": "Frankly PDRN Bounce Ball Serum",
-        "notes": "Miktar: 2-3 damla. PDRN, retinal sonrası hücre onarımını destekler ve cildi hızla toparlar. Alternatifler: Lancôme Génifique Serum, Estée Lauder ANR, Anyong Barrier Reform Serum."
+        "notes": "Miktar: 2-3 damla. PDRN, retinal sonrası hücre onarımını destekler ve cildi hızla toparlar. Alternatifler: Lancôme Génifique Serum, Estée Lauder ANR."
       },
       {
         "step": "5. Göz Kremi",
@@ -380,12 +380,12 @@ const skincareData = {
     ]
   },
   "Cumartesi": {
-    "theme": "Leke Odaklı Gece",
+    "theme": "Leke Odaklı Bakım 🎯",
     "morning": [
       {
         "step": "1. Temizleme",
-        "product": "Licapenin Köpük",
-        "notes": "Miktar: 1 pompa."
+        "product": "Round Lab Pine Calming Cica Cleanser",
+        "notes": "Miktar: Fındık büyüklüğünde."
       },
       {
         "step": "2. Cihaz",
@@ -426,8 +426,8 @@ const skincareData = {
       },
       {
         "step": "2. İkinci Temizleme",
-        "product": "Licapenin Sakura & Centella Köpük",
-        "notes": "Miktar: 1 pompa."
+        "product": "Round Lab Pine Calming Cica Cleanser",
+        "notes": "Miktar: Fındık büyüklüğünde."
       },
       {
         "step": "3. Tonik",
@@ -457,7 +457,7 @@ const skincareData = {
     ]
   },
   "Pazar": {
-    "theme": "Onarım & Keyif",
+    "theme": "Onarım & Keyif 💆‍♀️",
     "morning": [
       {
         "step": "1. Temizleme",
@@ -481,7 +481,7 @@ const skincareData = {
       },
       {
         "step": "5. Serum",
-        "product": "Bibimcos Hyaluronic Booster Serum",
+        "product": "Frankly Heyday Pantenol Serumu",
         "notes": "Miktar: 2-3 damla."
       },
       {
@@ -508,7 +508,7 @@ const skincareData = {
       },
       {
         "step": "2. İkinci Temizleme",
-        "product": "Skin41 Pirinç Özlü Jel",
+        "product": "Skin401 Pirinç Özlü Jel",
         "notes": "Miktar: Fındık büyüklüğünde."
       },
       {
